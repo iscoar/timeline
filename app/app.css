@@ -13,3 +13,7 @@ body {
     color-scheme: dark;
   }
 }
+
+.react-calendar-timeline .rct-dateHeader {
+  @apply bg-gray-800 dark:bg-gray-800;
+}
