@@ -1,0 +1,150 @@
+@import "tailwindcss";
+
+.react-calendar-timeline {
+  @apply bg-[#fafafa] rounded-xl border border-gray-200 shadow-sm;
+}
+
+/* Quitar líneas duras por defecto */
+.react-calendar-timeline .rct-outer {
+  @apply border-none;
+}
+
+/* ==============================
+   HEADER / REGLA DE TIEMPO
+   ============================== */
+
+.react-calendar-timeline .rct-header-root {
+  @apply bg-white border-b border-gray-200;
+}
+
+.react-calendar-timeline .rct-header {
+  @apply text-gray-600 font-medium tracking-tight;
+}
+
+/* Etiquetas de tiempo (más estilo Notion) */
+.react-calendar-timeline .rct-label {
+  @apply text-xs font-medium text-gray-500;
+}
+
+/* ==============================
+   LÍNEAS DE LA CUADRÍCULA
+   ============================== */
+
+.react-calendar-timeline .rct-vertical-lines .rct-vl {
+  @apply bg-gray-100;
+}
+
+/* Líneas horizontales más suaves */
+.react-calendar-timeline .rct-horizontal-lines .rct-hl-even,
+.react-calendar-timeline .rct-horizontal-lines .rct-hl-odd {
+  @apply bg-gray-50 border-b border-gray-100;
+}
+
+/* ==============================
+   SIDEBAR (CARRILES)
+   ============================== */
+
+/* .react-calendar-timeline .rct-sidebar {
+  @apply hidden;
+}
+
+.react-calendar-timeline .rct-scroll, .react-calendar-timeline .rct-calendar-header {
+  width: 100% !important;
+}
+
+[data-testid="sidebarHeader"] {
+ @apply hidden;
+} */
+
+/* Filas de los carriles */
+.react-calendar-timeline .rct-sidebar .rct-sidebar-row {
+  @apply flex items-center px-4 text-sm font-bold text-gray-700 cursor-pointer;
+}
+
+/* Hover sutil tipo Linear */
+.react-calendar-timeline .rct-sidebar .rct-sidebar-row:hover {
+  @apply bg-gray-50;
+}
+
+/* ==============================
+   ITEMS (TAREAS)
+   ============================== */
+
+.react-calendar-timeline .rct-item {
+  @apply rounded-lg shadow-sm transition-all duration-150;
+}
+
+/* Efecto hover estilo Linear */
+.react-calendar-timeline .rct-item:hover {
+  @apply shadow-md;
+}
+
+/* Estado seleccionado (muy Notion/Linear) */
+.react-calendar-timeline .rct-item.selected {
+  @apply ring-2 ring-blue-400;
+}
+
+/* Contenido interno del item */
+.react-calendar-timeline .rct-item-content {
+  @apply text-white text-sm font-medium px-2 py-1;
+}
+
+/* Bordes sutiles tipo tarjeta */
+.react-calendar-timeline .rct-item {
+  @apply border border-white/20;
+}
+
+/* ==============================
+   RESIZE HANDLE
+   ============================== */
+
+.react-calendar-timeline .rct-item-resizer {
+  @apply bg-white/30 hover:bg-white/50 transition-colors;
+}
+
+/* ==============================
+   INDICADOR DE TIEMPO ACTUAL
+   ============================== */
+
+.react-calendar-timeline .rct-current-time {
+  @apply bg-red-400;
+}
+
+/* Puntito superior (más suave) */
+.react-calendar-timeline .rct-current-time-circle {
+  @apply bg-red-400 shadow-md;
+}
+
+/* ==============================
+   SCROLLBAR (Opcional, muy Linear)
+   ============================== */
+
+.react-calendar-timeline ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.react-calendar-timeline ::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full;
+}
+
+.react-calendar-timeline ::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+.rct-dateHeader-primary, .react-calendar-timeline .rct-dateHeader-primary {
+  @apply text-amber-700 font-bold;
+}
+
+.rct-dateHeader {
+  @apply text-amber-700;
+}
+
+.rct-sidebar-row:last-child,
+.rct-horizontal-lines .rct-hl-row:last-child {
+  @apply bg-gray-100;
+  @apply border-t-2 border-dashed border-slate-300;
+}
+
+.rct-sidebar-row:last-child span {
+  @apply text-indigo-500 font-bold;
+}

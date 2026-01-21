@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./styles/accessibility.css";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
@@ -12,4 +13,114 @@ body {
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
   }
+}
+
+/* Skip links for keyboard navigation */
+.skip-links {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+}
+
+.skip-link {
+  @apply sr-only focus:not-sr-only bg-blue-600 text-white px-4 py-2 m-2 rounded-md;
+}
+
+/* Enhanced focus styles for better accessibility */
+.focus-visible {
+  @apply outline-none ring-2 ring-blue-500 ring-offset-2;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .focus-visible {
+    @apply ring-4 ring-offset-4;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .react-calendar-timeline * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Improved keyboard navigation for timeline */
+.react-calendar-timeline .rct-item {
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1;
+}
+
+.react-calendar-timeline .rct-sidebar-row {
+  @apply focus:outline-none focus:ring-1 focus:ring-blue-400;
+}
+
+/* Accessible button styles */
+.btn-accessible {
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Accessible form controls */
+.form-control {
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+  min-height: 44px;
+}
+
+/* Screen reader announcements */
+.sr-announcement {
+  @apply sr-only;
+}
+
+/* Timeline specific accessibility */
+.react-calendar-timeline .rct-dateHeader {
+  @apply bg-gray-800 dark:bg-gray-800;
+}
+
+.react-calendar-timeline .today-marker {
+  @apply sr-only;
+}
+
+/* Modal accessibility */
+.modal-backdrop {
+  @apply fixed inset-0 bg-black/50 flex items-center justify-center z-50;
+}
+
+.modal-content {
+  @apply bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-screen overflow-auto;
+  @apply focus:outline-none;
+}
+
+/* Group renderer accessibility */
+.custom-group {
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+/* Status indicators for screen readers */
+.status-indicator {
+  @apply sr-only;
+}
+
+/* Improved color contrast */
+.text-high-contrast {
+  @apply text-gray-900 dark:text-white;
+}
+
+.bg-high-contrast {
+  @apply bg-white dark:bg-gray-900;
+}
+
+/* Accessible error messages */
+.error-message {
+  @apply text-red-600 dark:text-red-400 font-medium;
+  @apply focus:outline-none focus:ring-1 focus:ring-red-500;
+}
+
+/* Accessible success messages */
+.success-message {
+  @apply text-green-600 dark:text-green-400 font-medium;
+  @apply focus:outline-none focus:ring-1 focus:ring-green-500;
 }
