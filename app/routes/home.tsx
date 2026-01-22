@@ -35,21 +35,19 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-linear-to-br from-indigo-50 to-blue-50 p-6">
       <div className="max-w-[95vw] mx-auto">
-        <div className="bg-gray-800 rounded-2xl shadow-2xl">
-          <TimelineControls
-            newTaskName={newTaskName}
-            setNewTaskName={setNewTaskName}
-            startTime={startTime}
-            setStartTime={setStartTime}
-            endTime={endTime}
-            setEndTime={setEndTime}
-            addTask={handleAddTask}
-            setZoomIn={handleZoomIn}
-            setZoomOut={handleZoomOut}
-            setToday={handleSetToday}
-          />
-          <TimelineView />
-        </div>
+        <TimelineControls
+          newTaskName={newTaskName}
+          setNewTaskName={setNewTaskName}
+          startTime={startTime}
+          setStartTime={setStartTime}
+          endTime={endTime}
+          setEndTime={setEndTime}
+          addTask={handleAddTask}
+          setZoomIn={handleZoomIn}
+          setZoomOut={handleZoomOut}
+          setToday={handleSetToday}
+        />
+        <TimelineView />
       </div>
     </div>
   );

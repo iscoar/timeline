@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import dayjs from "dayjs";
-import Timeline, { TodayMarker, type Id } from "react-calendar-timeline";
+import Timeline, { DateHeader, SidebarHeader, TimelineHeaders, TodayMarker, type Id } from "react-calendar-timeline";
 import { GroupEditModal } from "./GroupEditModal";
 import { errorLogger } from "~/services/errorLogger";
 import { EventDetailsModal } from "./EventDetailsModal";
@@ -161,7 +161,7 @@ export const TimelineView = () => {
 
       <div
         id="timeline-content"
-        style={{ height: "650px", padding: "16px" }}
+        className="timeline-container mt-4 rounded-lg border border-gray-300 bg-white shadow-lg h-60 overflow-auto"
         role="application"
         aria-label="Task timeline"
         aria-describedby="timeline-instructions"
@@ -241,6 +241,15 @@ export const TimelineView = () => {
                 );
               }}
             >
+              <TimelineHeaders className="sticky top-0 z-50">
+                <SidebarHeader>
+                  {({ getRootProps }) => {
+                    return <div {...getRootProps()}>Left</div>;
+                  }}
+                </SidebarHeader>
+                <DateHeader unit="primaryHeader" />
+                <DateHeader />
+              </TimelineHeaders>
               <TodayMarker>
                 {({ styles, date }) =>
                   <div

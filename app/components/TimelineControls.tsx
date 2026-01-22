@@ -26,28 +26,28 @@ export const TimelineControls: React.FC<Props> = ({
   setToday,
 }) => {
   return (
-    <div className="flex gap-4 p-5 flex-wrap">
+    <div className="flex gap-4 flex-wrap">
       <div className="flex-1 flex gap-2">
         <input
           type="text"
           value={newTaskName}
           onChange={(e) => setNewTaskName(e.target.value)}
           placeholder="Nombre de la tarea..."
-          className="flex-1 px-4 py-3 border-2 border-gray-200 text-white rounded-xl focus:outline-none focus:border-blue-500 transition-colors"
+          className="flex-1 px-4 py-3 border-2 bg-white border-gray-200 text-gray-800 rounded-xl focus:outline-none focus:border-blue-500 transition-colors"
         />
         <input
           type="datetime-local"
           value={startTime}
           onChange={(e) => setStartTime(e.target.value)}
           placeholder="Fecha de inicio..."
-          className="flex-1 px-4 py-3 border-2 border-gray-200 text-white rounded-xl focus:outline-none focus:border-blue-500 transition-colors"
+          className="flex-1 px-4 py-3 border-2 bg-white border-gray-200 text-gray-800 rounded-xl focus:outline-none focus:border-blue-500 transition-colors"
         />
         <input
           type="datetime-local"
           value={endTime}
           onChange={(e) => setEndTime(e.target.value)}
           placeholder="Fecha de fin..."
-          className="flex-1 px-4 py-3 border-2 border-gray-200 text-white rounded-xl focus:outline-none focus:border-blue-500 transition-colors"
+          className="flex-1 px-4 py-3 border-2 bg-white border-gray-200 text-gray-800 rounded-xl focus:outline-none focus:border-blue-500 transition-colors"
         />
         <button
           onClick={addTask}
