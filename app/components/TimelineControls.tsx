@@ -33,25 +33,25 @@ export const TimelineControls: React.FC<Props> = ({
           value={newTaskName}
           onChange={(e) => setNewTaskName(e.target.value)}
           placeholder="Nombre de la tarea..."
-          className="flex-1 px-4 py-3 border-2 bg-white border-gray-200 text-gray-800 rounded-xl focus:outline-none focus:border-blue-500 transition-colors"
+          className="flex-1 px-4 py-3 border-2 bg-white border-[#E0E0E0] text-gray-800 rounded-xl focus:outline-none focus:border-blue-500 transition-colors"
         />
         <input
           type="datetime-local"
           value={startTime}
           onChange={(e) => setStartTime(e.target.value)}
           placeholder="Fecha de inicio..."
-          className="flex-1 px-4 py-3 border-2 bg-white border-gray-200 text-gray-800 rounded-xl focus:outline-none focus:border-blue-500 transition-colors"
+          className="flex-1 px-4 py-3 border-2 bg-white border-[#E0E0E0] text-gray-800 rounded-xl focus:outline-none focus:border-blue-500 transition-colors"
         />
         <input
           type="datetime-local"
           value={endTime}
           onChange={(e) => setEndTime(e.target.value)}
           placeholder="Fecha de fin..."
-          className="flex-1 px-4 py-3 border-2 bg-white border-gray-200 text-gray-800 rounded-xl focus:outline-none focus:border-blue-500 transition-colors"
+          className="flex-1 px-4 py-3 border-2 bg-white border-[#E0E0E0] text-gray-800 rounded-xl focus:outline-none focus:border-blue-500 transition-colors"
         />
         <button
           onClick={addTask}
-          className="px-6 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors flex items-center gap-2 font-medium"
+          className="px-6 py-3 bg-[#00A0FE] text-white rounded-xl hover:bg-[#00A0FE]/80 transition-colors flex items-center gap-2 font-medium"
         >
           <Plus size={20} />
           Agregar
@@ -61,21 +61,21 @@ export const TimelineControls: React.FC<Props> = ({
       <div className="flex gap-2">
         <button
           onClick={() => setZoomOut()}
-          className="p-3 bg-gray-500 rounded-xl hover:bg-gray-600 transition-colors"
+          className="p-3 bg-[#00A0FE] text-white rounded-xl hover:bg-[#00A0FE]/80 transition-colors"
         >
           <ZoomOut size={20} />
         </button>
 
         <button
           onClick={() => setZoomIn()}
-          className="p-3 bg-gray-500 rounded-xl hover:bg-gray-600 transition-colors"
+          className="p-3 bg-[#00A0FE] text-white rounded-xl hover:bg-[#00A0FE]/80 transition-colors"
         >
           <ZoomIn size={20} />
         </button>
 
         <button
           onClick={() => setToday()}
-          className="px-6 py-3 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors flex items-center gap-2 font-medium"
+          className="px-6 py-3 bg-[#142D63] text-white rounded-xl hover:bg-[#142D63]/80 transition-colors flex items-center gap-2 font-medium"
         >
           <Timer size={20} />
           Ahora

@@ -33,7 +33,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-indigo-50 to-blue-50 p-6">
+    <div className="min-h-screen bg-[#F1F4F9] p-6">
       <div className="max-w-[95vw] mx-auto">
         <TimelineControls
           newTaskName={newTaskName}

@@ -161,7 +161,8 @@ export const TimelineView = () => {
 
       <div
         id="timeline-content"
-        className="timeline-container mt-4 rounded-lg border border-gray-300 bg-white shadow-lg h-60 overflow-auto"
+        className="timeline-container mt-4 rounded-lg border border-gray-300 bg-white shadow-lg h-60 overflow-auto resize-y min-h-60 max-h-[80vh]"
+        style={{ resize: 'vertical' }}
         role="application"
         aria-label="Task timeline"
         aria-describedby="timeline-instructions"
@@ -241,7 +242,7 @@ export const TimelineView = () => {
                 );
               }}
             >
-              <TimelineHeaders className="sticky top-0 z-50">
+              <TimelineHeaders className="sticky top-0 z-81">
                 <SidebarHeader>
                   {({ getRootProps }) => {
                     return <div {...getRootProps()}>Left</div>;
