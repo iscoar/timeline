@@ -8,7 +8,7 @@ import { useEffect } from "react";
 
 export function meta({ }: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
+    { title: "Timeline App" },
     { name: "description", content: "Welcome to React Router!" },
   ];
 }
@@ -33,7 +33,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F1F4F9] p-6">
+    <div className="bg-[#F1F4F9]">
       <div className="max-w-[95vw] mx-auto">
         <TimelineControls
           newTaskName={newTaskName}
