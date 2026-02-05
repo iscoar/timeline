@@ -1,24 +1,57 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { NavLink, useNavigate } from 'react-router';
+import authService from '~/services/authService';
+import useAuthStore from '~/store/authStore';
 
 export default function Login() {
     const navigate = useNavigate();
     const [withPassword, setWithPassword] = useState(false);
 
-    const onAction = (e: FormEvent<HTMLFormElement>) => {
+    const setPendingEmail = useAuthStore((s: any) => s.setPendingEmail);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+
+    const onAction = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setError('');
+        setLoading(true);
         const formData = new FormData(e.currentTarget);
-        const values = Object.fromEntries(formData.entries());
-        console.log('login action', values, { withPassword });
+        const values = Object.fromEntries(formData.entries()) as { email?: string; password?: string };
+        const email = String(values.email || '');
 
-        if (withPassword) {
-            // Normal login with password
-            return navigate('/');
+        try {
+            if (withPassword) {
+                // Normal login with password via Supabase
+                const { data, error } = await authService.signInWithPassword(email, String(values.password || ''));
+                if (error) {
+                    console.error('login error', error);
+                    setError(String((error && (error as Error).message) || 'Error al iniciar sesión'));
+                    setLoading(false);
+                    return;
+                }
+                // If successful, store user (response shape varies between SDK versions)
+                const user = data?.data?.user ?? data?.data?.session?.user ?? null;
+                useAuthStore.getState().setUser(user);
+                setLoading(false);
+                return navigate('/');
+            }
+
+            // If not using password, send OTP and save pending email
+            const { data, error } = await authService.sendOtp(email);
+            if (error) {
+                console.error('send otp error', error);
+                setError(String((error && (error as Error).message) || 'Error al enviar código'));
+                setLoading(false);
+                return;
+            }
+            setPendingEmail(email);
+            setLoading(false);
+            return navigate('/verify');
+        } catch (err) {
+            setError(String((err && (err as Error).message) || 'Error inesperado'));
+            setLoading(false);
         }
-
-        // If not using password, go to verification code page
-        return navigate('/verify');
     }
 
     return (
@@ -52,10 +85,11 @@ export default function Login() {
                 )}
 
                 <button
+                    disabled={loading}
                     type="submit"
                     className="bg-[#142D63] text-white font-bold text-lg hover:bg-[#142D63]/80 p-2 mt-8"
                 >
-                    {withPassword ? 'Entrar' : 'Siguiente'}
+                    {loading ? 'Enviando...' : withPassword ? 'Entrar' : 'Siguiente'}
                 </button>
             </form>
 
