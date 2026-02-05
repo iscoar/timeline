@@ -7,7 +7,7 @@ export default function AuthLayout() {
       <div className="w-full min-h-screen flex flex-wrap">
         <div className="w-full md:w-1/2 flex flex-col">
           <div className="flex justify-center md:justify-start pt-12 md:pl-12 md:-mb-24">
-            <a href="#" className="bg-[#142D63] text-white font-bold text-xl p-4">Timeline</a>
+            <h1 className="bg-[#142D63] text-white font-bold text-xl p-4">Timeline</h1>
           </div>
 
           <Outlet />
