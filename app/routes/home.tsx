@@ -4,6 +4,7 @@ import { TimelineControls } from "~/components/TimelineControls";
 import { useTimeline } from "~/hooks/useTimeline";
 import { useTask } from "~/hooks/useTask";
 import { useEffect } from "react";
+import Loading from "~/components/Loading";
 
 export function meta({ }: Route.MetaArgs) {
   return [
@@ -33,11 +34,7 @@ export default function Home() {
   }
 
   if (loading) {
-    return (
-      <div className="bg-[#F1F4F9] min-h-screen flex items-center justify-center">
-        <div className="text-xl text-gray-500">Cargando...</div>
-      </div>
-    );
+    return <Loading />;
   }
 
   return (
