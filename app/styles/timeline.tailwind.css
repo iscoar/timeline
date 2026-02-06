@@ -56,6 +56,11 @@
  @apply hidden;
 } */
 
+.sidebar__header__title {
+  @apply font-bold text-lg p-4;
+  color: #1e2939 !important;
+}
+
 /* Filas de los carriles */
 .react-calendar-timeline .rct-sidebar .rct-sidebar-row {
   @apply flex items-center px-4 text-sm font-bold text-[#142D63] cursor-pointer;
@@ -72,8 +77,10 @@
 
 .react-calendar-timeline .rct-item {
   @apply rounded-lg shadow-sm transition-all duration-150;
-  background-color: #00A0FE !important;
-  background: #00A0FE !important;
+}
+
+.react-calendar-timeline .rct-item.selected {
+  background: rgb(255, 193, 7);
 }
 
 /* Efecto hover estilo Linear */
