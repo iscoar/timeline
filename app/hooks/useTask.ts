@@ -6,6 +6,7 @@ export const useTask = () => {
     const [newTaskName, setNewTaskName] = useState("");
     const [startTime, setStartTime] = useState("");
     const [endTime, setEndTime] = useState("");
+    const [isSaving, setIsSaving] = useState(false);
 
     const addTask = () => {
         if (!newTaskName.trim()) return;
@@ -32,6 +33,8 @@ export const useTask = () => {
         setStartTime,
         endTime,
         setEndTime,
+        isSaving,
+        setIsSaving,
         addTask,
     };
 };

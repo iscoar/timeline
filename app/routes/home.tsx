@@ -1,9 +1,8 @@
 import type { Route } from "./+types/home";
-import { TimelineView } from "~/components/task-timeline";
+import { TimelineView } from "~/components/TimelineView";
 import { TimelineControls } from "~/components/TimelineControls";
-import { useTimelineController } from "~/controllers/timelineController";
+import { useTimeline } from "~/hooks/useTimeline";
 import { useTask } from "~/hooks/useTask";
-import { useTimelineStore } from "~/store/timelineStore";
 import { useEffect } from "react";
 
 export function meta({ }: Route.MetaArgs) {
@@ -14,22 +13,31 @@ export function meta({ }: Route.MetaArgs) {
 }
 
 export default function Home() {
-  const { newTaskName, setNewTaskName, startTime, setStartTime, endTime, setEndTime, addTask } = useTask();
-  const { handleZoomIn, handleZoomOut, handleSetToday, addItem } = useTimelineController();
-  const loadFromStorage = useTimelineStore((s) => s.loadFromStorage);
+  const { newTaskName, setNewTaskName, startTime, setStartTime, endTime, setEndTime, isSaving, setIsSaving, addTask } = useTask();
+  const { handleZoomIn, handleZoomOut, handleSetToday, addItem, loadInitialData, loading } = useTimeline();
 
-  // Load data from localStorage on component mount
+  // Load data from Supabase on component mount
   useEffect(() => {
-    loadFromStorage();
-  }, [loadFromStorage]);
+    loadInitialData().catch((err) => console.error('Failed loading timeline', err));
+  }, [loadInitialData]);
 
-  const handleAddTask = () => {
+  const handleAddTask = async () => {
+    setIsSaving(true);
     const newItem = addTask();
     if (newItem) {
       // Here you would typically add the new item to your timeline store
       console.log("Nueva tarea agregada:", newItem);
-      addItem(newItem);
+      await addItem(newItem);
+      setIsSaving(false);
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="bg-[#F1F4F9] min-h-screen flex items-center justify-center">
+        <div className="text-xl text-gray-500">Cargando...</div>
+      </div>
+    );
   }
 
   return (
@@ -43,6 +51,7 @@ export default function Home() {
           endTime={endTime}
           setEndTime={setEndTime}
           addTask={handleAddTask}
+          isSaving={isSaving}
           setZoomIn={handleZoomIn}
           setZoomOut={handleZoomOut}
           setToday={handleSetToday}

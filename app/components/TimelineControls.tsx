@@ -8,6 +8,7 @@ interface Props {
   endTime: string;
   setEndTime: (v: string) => void;
   addTask: () => void;
+  isSaving: boolean;
   setZoomIn: () => void;
   setZoomOut: () => void;
   setToday: () => void;
@@ -21,6 +22,7 @@ export const TimelineControls: React.FC<Props> = ({
   endTime,
   setEndTime,
   addTask,
+  isSaving,
   setZoomIn,
   setZoomOut,
   setToday,
@@ -51,10 +53,11 @@ export const TimelineControls: React.FC<Props> = ({
         />
         <button
           onClick={addTask}
+          disabled={isSaving || !newTaskName || !startTime || !endTime}
           className="px-6 py-3 bg-[#00A0FE] text-white rounded-xl hover:bg-[#00A0FE]/80 transition-colors flex items-center gap-2 font-medium"
         >
           <Plus size={20} />
-          Agregar
+          {isSaving ? 'Guardando...' : 'Agregar tarea'}
         </button>
       </div>
 
