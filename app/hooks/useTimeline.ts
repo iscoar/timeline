@@ -261,6 +261,74 @@ export const useTimeline = () => {
         }
     };
 
+    const saveItem = async (updatedEvent: TimelineItem) => {
+        try {
+            await supabase
+                .from('tasks')
+                .update({ title: updatedEvent.title })
+                .eq('id', Number(updatedEvent.id));
+
+            const state = useTimelineStore.getState();
+            const newItems = state.items.map((it) =>
+                it.id === updatedEvent.id ? { ...it, title: updatedEvent.title } : it
+            );
+            useTimelineStore.getState().setItems(newItems);
+        } catch (e) {
+            console.error('Failed saving item', e);
+            throw e;
+        }
+    };
+
+    const finishItem = async (eventId: string) => {
+        try {
+            await supabase
+                .from('tasks')
+                .update({ is_completed: true })
+                .eq('id', Number(eventId));
+
+            const state = useTimelineStore.getState();
+            const newItems = state.items.map((it) =>
+                it.id === eventId
+                    ? {
+                          ...it,
+                          canMove: false,
+                          canResize: false,
+                          canChangeGroup: false,
+                          itemProps: {
+                              ...it.itemProps,
+                              is_completed: true,
+                              style: {
+                                  ...it.itemProps?.style,
+                                  background: '#4CAF50',
+                              },
+                          },
+                      }
+                    : it
+            );
+            useTimelineStore.getState().setItems(newItems);
+        } catch (e) {
+            console.error('Failed finishing item', e);
+            throw e;
+        }
+    };
+
+    const deleteItem = async (eventId: string) => {
+        try {
+            const now = dayjs();
+            await supabase
+                .from('tasks')
+                .update({ deleted_at: formatDate(now.valueOf()) })
+                .eq('id', Number(eventId));
+
+            const state = useTimelineStore.getState();
+            const newItems = state.items.filter((it) => it.id !== eventId);
+            useTimelineStore.getState().setItems(newItems);
+        } catch (e) {
+            console.error('Failed deleting item', e);
+            throw e;
+        }
+    };
+
     const loadInitialData = useCallback(async () => {
         if (!user) return;
 
@@ -281,6 +349,7 @@ export const useTimeline = () => {
             .from('tasks')
             .select('id, group_id, title, start_time, end_time, is_completed')
             .eq('user_id', user.id)
+            .is('deleted_at', null)
             .order('start_time', { ascending: true });
 
         if (tasksData) {
@@ -308,6 +377,7 @@ export const useTimeline = () => {
 
     return {
         items,
+        groups,
         timelineRef,
         handleItemMove,
         handleItemResize,
@@ -319,6 +389,9 @@ export const useTimeline = () => {
         addItem,
         addGroup,
         updateGroup,
+        saveItem,
+        finishItem,
+        deleteItem,
         loadInitialData,
         loading,
         selectedItemId,

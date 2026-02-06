@@ -5,7 +5,7 @@ import { GroupEditModal } from "./GroupEditModal";
 import { errorLogger } from "~/services/errorLogger";
 import { EventDetailsModal } from "./EventDetailsModal";
 import { useTimeline } from "~/hooks/useTimeline";
-import { type TimelineGroup, useTimelineStore } from "~/store/timelineStore";
+import { type TimelineGroup, type TimelineItem } from "~/store/timelineStore";
 import { TaskOperationErrorBoundary, TimelineErrorBoundary } from "./TimelineErrorBoundary";
 import { useAriaLive, useKeyboardShortcuts, useAriaAttributes } from "~/hooks/useAccessibility";
 import { AriaLiveRegion, Main, createTimelineItemLabel } from "./AccessibilityUtils";
@@ -16,9 +16,16 @@ import "~/styles/timeline.tailwind.css";
 dayjs.locale("es");
 
 export const TimelineView = () => {
-  const groups = useTimelineStore((s) => s.groups);
-  const { items, timelineRef, handleItemMove, handleItemResize, handleItemSelect, updateGroup, handleItemDeselect } =
+  const { items, groups, timelineRef, handleItemMove, handleItemResize, handleItemSelect, updateGroup, handleItemDeselect, saveItem, finishItem, deleteItem } =
     useTimeline();
+
+  // Toast state
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'info' | 'error' } | null>(null);
+
+  const showToast = (message: string, type: 'success' | 'info' | 'error' = 'info') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
 
   // Accessibility hooks
   const { announcePolite, announcementRef } = useAriaLive();
@@ -140,11 +147,53 @@ export const TimelineView = () => {
     }
   };
 
+  const handleSaveEvent = async (updatedEvent: TimelineItem) => {
+    try {
+      await saveItem(updatedEvent);
+      announcePolite('Task changes saved');
+      showToast('Tarea guardada', 'success');
+      handleCloseModal();
+    } catch (e) {
+      errorLogger.log(e as Error, { severity: 'medium', context: { componentName: 'TimelineView', action: 'save_event' } });
+    }
+  }
+
+  const handleFinishEvent = async (eventId: string) => {
+    try {
+      await finishItem(eventId);
+      announcePolite('Task marked as completed');
+      showToast('Tarea finalizada', 'success');
+      handleCloseModal();
+    } catch (e) {
+      errorLogger.log(e as Error, { severity: 'medium', context: { componentName: 'TimelineView', action: 'finish_event' } });
+    }
+  }
+
+  const handleDeleteEvent = async (eventId: string) => {
+    try {
+      await deleteItem(eventId);
+      announcePolite('Task deleted');
+      showToast('Tarea eliminada', 'info');
+    } catch (e) {
+      errorLogger.log(e as Error, { severity: 'medium', context: { componentName: 'TimelineView', action: 'delete_event' } });
+    }
+  }
+
   const selectedEventItem = items.find(item => item.id === selectedEvent);
   const selectedEventGroup = groups.find(group => group.id === selectedEventItem?.group);
+  // Key to force Timeline remount when item titles change
+  const itemsKey = items.map(i => `${i.id}:${i.title}`).join('|');
 
   return (
     <Main label="Timeline view for task management">
+      {/* Toast */}
+      {toast && (
+        <div className={`fixed top-4 right-4 z-50 pointer-events-auto`}> 
+          <div className={`px-4 py-2 rounded shadow-lg text-white ${toast.type === 'success' ? 'bg-green-600' : toast.type === 'error' ? 'bg-red-600' : 'bg-blue-600'}`}>
+            {toast.message}
+          </div>
+        </div>
+      )}
       {/* Skip links for keyboard navigation */}
       <div className="skip-links">
         <a href="#timeline-content" className="skip-link">
@@ -169,6 +218,7 @@ export const TimelineView = () => {
         <TimelineErrorBoundary onTimelineError={handleTimelineError}>
           <TaskOperationErrorBoundary>
             <Timeline
+              key={itemsKey}
               ref={timelineRef}
               groups={groups}
               items={items}
@@ -272,6 +322,9 @@ export const TimelineView = () => {
             onClose={handleCloseModal}
             event={selectedEventItem || null}
             groupName={selectedEventGroup?.title}
+            onSave={handleSaveEvent}
+            onDelete={handleDeleteEvent}
+            onFinish={handleFinishEvent}
           />
         </TaskOperationErrorBoundary>
 
