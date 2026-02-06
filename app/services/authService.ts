@@ -39,6 +39,28 @@ export const authService = {
       return { error };
     }
   }
+  ,
+
+  async updateUserProfile(updates: { full_name?: string; avatar_url?: string; [k: string]: any }) {
+    try {
+        const res = await supabase.auth.updateUser({ data: updates });
+        if ((res as any).error) return { data: null, error: (res as any).error };
+        return { data: res, error: null };
+    } catch (error) {
+      return { data: null, error };
+    }
+  },
+
+  async changePassword(email: string, newPassword: string) {
+    try {
+        const res = await supabase.auth.updateUser({ password: newPassword });
+        if ((res as any).error) return { data: null, error: (res as any).error };
+        return { data: res, error: null };
+      
+    } catch (error) {
+      return { data: null, error };
+    }
+  }
 };
 
 export default authService;
