@@ -296,7 +296,7 @@ export const TimelineView = () => {
               <TimelineHeaders className="sticky top-0 z-81">
                 <SidebarHeader>
                   {({ getRootProps }) => {
-                    return <div {...getRootProps()} className="sidebar__header__title">Categorías</div>;
+                    return <div {...getRootProps()} className="sidebar__header__title">Objetivo</div>;
                   }}
                 </SidebarHeader>
                 <DateHeader unit="primaryHeader" />

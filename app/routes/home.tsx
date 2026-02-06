@@ -15,7 +15,7 @@ export function meta({ }: Route.MetaArgs) {
 
 export default function Home() {
   const { newTaskName, setNewTaskName, startTime, setStartTime, endTime, setEndTime, isSaving, setIsSaving, addTask } = useTask();
-  const { handleZoomIn, handleZoomOut, handleSetToday, addItem, loadInitialData, loading } = useTimeline();
+  const { items, handleZoomIn, handleZoomOut, handleSetToday, addItem, loadInitialData, loading } = useTimeline();
 
   // Load data from Supabase on component mount
   useEffect(() => {
@@ -53,7 +53,11 @@ export default function Home() {
           setZoomOut={handleZoomOut}
           setToday={handleSetToday}
         />
-        <TimelineView />
+        {items.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            No hay tareas en el timeline. Agrega una nueva tarea.
+          </div>
+        ): (<TimelineView />)}
       </div>
     </div>
   );
