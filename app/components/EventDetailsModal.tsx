@@ -1,5 +1,5 @@
-import { X } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { Check, Edit, Save, Trash2, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import type { TimelineItem } from "~/store/timelineStore";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -11,17 +11,26 @@ interface EventDetailsModalProps {
   onClose: () => void;
   event: TimelineItem | null;
   groupName?: string;
+  onSave: (updatedEvent: TimelineItem) => void;
+  onDelete: (eventId: string) => void;
+  onFinish: (eventId: string) => void;
 }
 
-export const EventDetailsModal = ({ isOpen, onClose, event, groupName }: EventDetailsModalProps) => {
+export const EventDetailsModal = ({ isOpen, onClose, event, groupName, onSave, onDelete, onFinish }: EventDetailsModalProps) => {
   const { containerRef } = useFocusManagement(isOpen);
   const { announcePolite } = useAriaLive();
   const previousEventRef = useRef<TimelineItem | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [title, setTitle] = useState(event?.title || "");
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     if (event && (!previousEventRef.current || previousEventRef.current.id !== event.id)) {
       announcePolite(`Event details opened: ${event.title}`);
       previousEventRef.current = event;
+      setTitle(event.title || "");
+      setIsEditing(false);
     }
   }, [event, announcePolite]);
 
@@ -85,8 +94,45 @@ export const EventDetailsModal = ({ isOpen, onClose, event, groupName }: EventDe
     return time.isBefore(now) ? `Hace ${now.to(time, true)}` : `En ${now.to(time, true)}`;
   }
 
+  const onEdit = () => {
+    setIsEditing(true);
+    announcePolite('Event edit mode activated');
+  }
+
+  const handleSave = () => {
+    if (!event) return;
+    const updated = { ...event, title };
+    setIsProcessing(true);
+    onSave(updated);
+    setIsEditing(false);
+    announcePolite('Event changes saved');
+    setIsProcessing(false);
+  }
+
+  const handleFinish = () => {
+    setIsProcessing(true);
+    announcePolite('Event marked as completed');
+    onFinish(event.id);
+    setIsProcessing(false);
+  }
+
+  const handleDelete = () => {
+    // show confirmation inside modal
+    setConfirmDelete(true);
+  }
+
+  const confirmDeleteNow = async () => {
+    if (!event) return;
+    setIsProcessing(true);
+    announcePolite('Deleting event');
+    await onDelete(event.id);
+    setIsProcessing(false);
+    setConfirmDelete(false);
+    onClose();
+  }
+
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black/50 flex items-center justify-center z-100"
       onClick={onClose}
       role="dialog"
@@ -94,14 +140,14 @@ export const EventDetailsModal = ({ isOpen, onClose, event, groupName }: EventDe
       aria-labelledby="event-details-title"
       aria-describedby="event-details-description"
     >
-      <div 
+      <div
         ref={containerRef}
         className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4"
         onClick={(e) => e.stopPropagation()}
         role="document"
       >
         <div className="flex items-center justify-between p-6 border-b">
-          <h2 
+          <h2
             id="event-details-title"
             className="text-xl font-semibold text-gray-900"
           >
@@ -116,103 +162,157 @@ export const EventDetailsModal = ({ isOpen, onClose, event, groupName }: EventDe
             <X className="w-5 h-5" />
           </button>
         </div>
-        <div 
+        <div className="flex justify-end gap-2 px-6 border-t bg-gray-50 rounded-b-lg">
+          {confirmDelete ? (
+            <>
+              <button
+                onClick={confirmDeleteNow}
+                disabled={isProcessing}
+                className="flex items-center px-4 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Trash2 className="w-4 h-4 mr-1" />
+                {isProcessing ? 'Eliminando...' : 'Confirmar eliminación'}
+              </button>
+              <button
+                onClick={() => setConfirmDelete(false)}
+                disabled={isProcessing}
+                className="flex items-center px-4 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <X className="w-4 h-4 mr-1" />
+                Cancelar
+                </button>
+            </>
+          ) : (
+            <>
+              {isEditing ? (
+                <button
+                  onClick={handleSave}
+                  disabled={isProcessing}
+                  className="flex items-center px-4 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  aria-label="Save event details"
+                >
+                  <Save className="w-4 h-4 mr-1" />
+                  {isProcessing ? 'Guardando...' : 'Guardar'}
+                </button>
+              ) : (
+                <button
+                  onClick={onEdit}
+                  className="flex items-center px-4 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
+                  aria-label="Edit event details"
+                >
+                  <Edit className="w-4 h-4 mr-1" />
+                  Editar
+                </button>
+              )}
+
+              <button
+                onClick={() => { setIsProcessing(true); handleFinish(); setIsProcessing(false); }}
+                disabled={isProcessing}
+                className="flex items-center px-4 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label="Close event details dialog"
+              >
+                <Check className="w-4 h-4 mr-1" />
+                Terminar tarea
+              </button>
+
+              <button
+                onClick={handleDelete}
+                disabled={isProcessing}
+                className="flex items-center px-4 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label="Delete event"
+              >
+                <Trash2 className="w-4 h-4 mr-1" />
+                Eliminar
+              </button>
+            </>
+          )}
+        </div>
+        <div
           id="event-details-description"
           className="p-6 space-y-4"
         >
           <div>
-            <label 
+            <label
               id="event-title-label"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
               Título
             </label>
-            <p 
-              className="text-gray-900 font-medium"
+            <input
+              type="text"
+              id="event-title"
+              name="event-title"
+              placeholder="Título del evento"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              disabled={!isEditing}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mt-1 leading-tight focus:outline-none focus:shadow-outline disabled:bg-gray-100 disabled:text-gray-500"
               aria-labelledby="event-title-label"
-            >
-              {event.title}
-            </p>
+              required
+            />
           </div>
-          
+
           <div>
-            <label 
+            <label
               id="event-category-label"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
               Categoría
             </label>
-            <p 
+            <p
               className="text-gray-900"
               aria-labelledby="event-category-label"
             >
               {groupName || "Sin categoría"}
             </p>
           </div>
-          
+
           <div>
-            <label 
+            <label
               id="event-start-label"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Inicio
+              Inicio - <span className="text-gray-700 text-sm">{getStart(event.start_time)}</span>
             </label>
-            <p 
+            <p
               className="text-gray-900"
               aria-labelledby="event-start-label"
             >
               {formatTime(event.start_time)}
             </p>
-            <p className="text-gray-700 text-sm">{getStart(event.start_time)}</p>
           </div>
-          
+
           <div>
-            <label 
+            <label
               id="event-end-label"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Fin
+              Fin - <span className="text-gray-700 text-sm">{getEnd(event.end_time)}</span>
             </label>
-            <p 
+            <p
               className="text-gray-900"
               aria-labelledby="event-end-label"
             >
               {formatTime(event.end_time)}
             </p>
-            <p className="text-gray-700 text-sm">{getEnd(event.end_time)}</p>
           </div>
-          
+
           <div>
-            <label 
+            <label
               id="event-duration-label"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
               Duración
             </label>
-            <p 
+            <p
               className="text-gray-900"
               aria-labelledby="event-duration-label"
             >
               {formatDuration(event.start_time, event.end_time)}
             </p>
           </div>
-          
-          {/* {event.color && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Color
-              </label>
-              <div className="flex items-center space-x-2">
-                <div 
-                  className="w-6 h-6 rounded border border-gray-300"
-                  style={{ backgroundColor: event.color }}
-                />
-                <span className="text-gray-900">{event.color}</span>
-              </div>
-            </div>
-          )} */}
         </div>
-        
+
         <div className="flex justify-end p-6 border-t bg-gray-50 rounded-b-lg">
           <button
             onClick={onClose}
