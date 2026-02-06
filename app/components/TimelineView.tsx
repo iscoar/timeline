@@ -1,10 +1,10 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import dayjs from "dayjs";
 import Timeline, { DateHeader, SidebarHeader, TimelineHeaders, TodayMarker, type Id } from "react-calendar-timeline";
 import { GroupEditModal } from "./GroupEditModal";
 import { errorLogger } from "~/services/errorLogger";
 import { EventDetailsModal } from "./EventDetailsModal";
-import { useTimelineController } from "~/controllers/timelineController";
+import { useTimeline } from "~/hooks/useTimeline";
 import { type TimelineGroup, useTimelineStore } from "~/store/timelineStore";
 import { TaskOperationErrorBoundary, TimelineErrorBoundary } from "./TimelineErrorBoundary";
 import { useAriaLive, useKeyboardShortcuts, useAriaAttributes } from "~/hooks/useAccessibility";
@@ -17,9 +17,8 @@ dayjs.locale("es");
 
 export const TimelineView = () => {
   const groups = useTimelineStore((s) => s.groups);
-  const { items, timelineRef, handleItemMove, handleItemResize, handleItemSelect } =
-    useTimelineController();
-  const updateGroup = useTimelineStore((s) => s.updateGroup);
+  const { items, timelineRef, handleItemMove, handleItemResize, handleItemSelect, updateGroup, handleItemDeselect } =
+    useTimeline();
 
   // Accessibility hooks
   const { announcePolite, announcementRef } = useAriaLive();
@@ -124,7 +123,7 @@ export const TimelineView = () => {
 
   const handleSaveGroup = async (groupId: string, newTitle: string) => {
     try {
-      updateGroup(groupId, newTitle);
+      await updateGroup(groupId, newTitle);
     } catch (error) {
       errorLogger.log({
         name: 'GroupSaveError',
@@ -189,6 +188,8 @@ export const TimelineView = () => {
                 handleItemSelect(String(itemId))
               }
 
+              onItemDeselect={handleItemDeselect}
+
               onItemDoubleClick={handleItemDoubleClick}
 
               visibleTimeStart={visibleTime.start}
@@ -245,7 +246,7 @@ export const TimelineView = () => {
               <TimelineHeaders className="sticky top-0 z-81">
                 <SidebarHeader>
                   {({ getRootProps }) => {
-                    return <div {...getRootProps()}>Left</div>;
+                    return <div {...getRootProps()} className="sidebar__header__title">Categorías</div>;
                   }}
                 </SidebarHeader>
                 <DateHeader unit="primaryHeader" />
