@@ -41,6 +41,16 @@ export const authService = {
   }
   ,
 
+  async signUp(email: string, password: string, metadata?: { full_name?: string }) {
+    try {
+      const res = await supabase.auth.signUp({ email, password, options: { data: metadata } });
+      if ((res as any).error) return { data: null, error: (res as any).error };
+      return { data: res, error: null };
+    } catch (error) {
+      return { data: null, error };
+    }
+  },
+
   async updateUserProfile(updates: { full_name?: string; avatar_url?: string; [k: string]: any }) {
     try {
         const res = await supabase.auth.updateUser({ data: updates });
