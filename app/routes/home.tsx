@@ -54,7 +54,7 @@ export default function Home() {
           setToday={handleSetToday}
         />
         {items.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 mt-4 text-gray-500 border-dashed border-2 border-gray-400 rounded-lg">
             No hay tareas en el timeline. Agrega una nueva tarea.
           </div>
         ): (<TimelineView />)}
