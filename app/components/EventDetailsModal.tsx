@@ -257,13 +257,13 @@ export const EventDetailsModal = ({ isOpen, onClose, event, groupName, onSave, o
               id="event-category-label"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Categoría
+              Objetivo
             </label>
             <p
               className="text-gray-900"
               aria-labelledby="event-category-label"
             >
-              {groupName || "Sin categoría"}
+              {groupName || "Sin objetivo"}
             </p>
           </div>
 

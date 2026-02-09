@@ -181,7 +181,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
             });
         },
 
-        createGroup: (title = "Nuevo carril") => {
+        createGroup: (title = "Nuevo objetivo") => {
             const newId = `group-${Date.now()}`;
 
             set((state) => {

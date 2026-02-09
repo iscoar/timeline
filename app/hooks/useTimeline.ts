@@ -45,7 +45,7 @@ export const useTimeline = () => {
 
         let finalGroupId = targetGroup.id;
         if (targetGroup.id === NEW_LANE_ID) {
-            const titleGroup = `Categoría ${groups.length}`;
+            const titleGroup = `Objetivo ${groups.length}`;
             const tempGroupId = createGroup(titleGroup);
             moveItemToGroup(itemId, tempGroupId, dragTime);
 
@@ -223,7 +223,7 @@ export const useTimeline = () => {
         useTimelineStore.getState().setItems(newItems);
     }
 
-    const addGroup = async (title = 'Nuevo carril') => {
+    const addGroup = async (title = 'Nuevo objetivo') => {
         try {
             const { data, error } = await supabase
                 .from('groups')
