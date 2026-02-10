@@ -6,7 +6,7 @@ import useAuthStore from '~/store/authStore';
 
 export default function Login() {
     const navigate = useNavigate();
-    const [withPassword, setWithPassword] = useState(false);
+    const [withPassword, setWithPassword] = useState(true);
 
     const setPendingEmail = useAuthStore((s: any) => s.setPendingEmail);
     const [loading, setLoading] = useState(false);
@@ -83,6 +83,8 @@ export default function Login() {
                         />
                     </div>
                 )}
+
+                {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
                 <button
                     disabled={loading}
